@@ -22,6 +22,18 @@ Taken from a local run (web app on Angular 21) with a demo workspace of sample p
 
 ![FlowForge dashboard](docs/screenshots/dashboard.png)
 
+**Sprints** with an active sprint, progress, and a burndown chart
+
+![FlowForge sprints and burndown chart](docs/screenshots/sprints.png)
+
+**Task details** with subtasks, logged time, comments, and attachments
+
+![FlowForge task details](docs/screenshots/task.png)
+
+**AI assistant**, shown before any document is uploaded. Answers come only from uploaded documents and cite the page they came from.
+
+![FlowForge AI assistant](docs/screenshots/assistant.png)
+
 ## What This Project Is
 
 FlowForge is a real, working SaaS application built from the ground up to demonstrate senior level software engineering practices, not a tutorial project or a CRUD demo.
