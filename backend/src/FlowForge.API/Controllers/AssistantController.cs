@@ -19,12 +19,12 @@ public class AssistantController : ControllerBase
 
     public AssistantController(IMediator mediator) => _mediator = mediator;
 
-    public record AskRequest(string Question);
+    public record AskRequest(string Question, List<ChatTurnDto>? History = null);
 
     [HttpPost("ask")]
     public async Task<IActionResult> Ask([FromBody] AskRequest request)
     {
-        var result = await _mediator.Send(new AskAssistantQuery(request.Question ?? ""));
+        var result = await _mediator.Send(new AskAssistantQuery(request.Question ?? "", request.History));
         return result.ToActionResult();
     }
 
@@ -32,7 +32,7 @@ public class AssistantController : ControllerBase
     [HttpPost("ask/stream")]
     public async Task StreamAsk([FromBody] AskRequest request, CancellationToken ct)
     {
-        var result = await _mediator.Send(new StreamAssistantQuery(request.Question ?? ""), ct);
+        var result = await _mediator.Send(new StreamAssistantQuery(request.Question ?? "", request.History), ct);
         if (result.IsFailure)
         {
             await result.ToActionResult().ExecuteResultAsync(ControllerContext);

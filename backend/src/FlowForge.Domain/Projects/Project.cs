@@ -41,7 +41,7 @@ public sealed class Project : SoftDeletableEntity
         ProjectVisibility visibility = ProjectVisibility.TenantWide)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 200)
-            return Result.Failure<Project>(Error.Validation("Project.InvalidName", "Name must be 1-200 chars"));
+            return Result.Failure<Project>(Error.Validation("Project.InvalidName", "Name must be 1 to 200 chars"));
 
         var project = new Project
         {
@@ -61,7 +61,7 @@ public sealed class Project : SoftDeletableEntity
     public Result UpdateDetails(string name, string? description, string? color, DateTime? startDate, DateTime? endDate)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 200)
-            return Result.Failure(Error.Validation("Project.InvalidName", "Name must be 1-200 chars"));
+            return Result.Failure(Error.Validation("Project.InvalidName", "Name must be 1 to 200 chars"));
 
         if (startDate.HasValue && endDate.HasValue && endDate < startDate)
             return Result.Failure(Error.Validation("Project.InvalidDates", "End date cannot be before start date"));

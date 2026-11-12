@@ -36,10 +36,10 @@ public sealed class User : AggregateRoot
     public static Result<User> Create(Email email, string firstName, string lastName, string passwordHash)
     {
         if (string.IsNullOrWhiteSpace(firstName) || firstName.Length > 100)
-            return Result.Failure<User>(Error.Validation("User.InvalidFirstName", "First name must be 1-100 chars"));
+            return Result.Failure<User>(Error.Validation("User.InvalidFirstName", "First name must be 1 to 100 chars"));
 
         if (string.IsNullOrWhiteSpace(lastName) || lastName.Length > 100)
-            return Result.Failure<User>(Error.Validation("User.InvalidLastName", "Last name must be 1-100 chars"));
+            return Result.Failure<User>(Error.Validation("User.InvalidLastName", "Last name must be 1 to 100 chars"));
 
         if (string.IsNullOrWhiteSpace(passwordHash))
             return Result.Failure<User>(Error.Validation("User.InvalidPassword", "Password hash required"));

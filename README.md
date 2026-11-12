@@ -1,10 +1,26 @@
 # FlowForge
 
-> An AI-augmented project and workflow management platform built with .NET 8, Angular 18, and a production-grade event-driven architecture.
+> An AI-augmented project and workflow management platform built with .NET 8, Angular 21, a Python FastAPI AI service, and a production-grade event-driven architecture.
 
 FlowForge is a multi-tenant SaaS application that helps teams plan projects, organize tasks across customizable boards, automate repetitive workflows, and use AI to summarize progress and detect risks before they become blockers.
 
 Think of it as Jira's structure, Linear's speed, and Monday's flexibility, augmented with an AI assistant that actually understands your team.
+
+## Screenshots
+
+Taken from a local run (web app on Angular 21) with a demo workspace of sample projects and tasks. There is no live deployment yet.
+
+**Home page**
+
+![FlowForge home page](docs/screenshots/home.png)
+
+**Project board** with live columns, task priorities, and project progress
+
+![FlowForge project board](docs/screenshots/board.png)
+
+**Dashboard**
+
+![FlowForge dashboard](docs/screenshots/dashboard.png)
 
 ## What This Project Is
 
@@ -51,40 +67,52 @@ The goal is to provide an engineering team a reference point that says "this per
 | Technology | Purpose |
 |------------|---------|
 | .NET 8 (LTS) | Runtime and framework |
-| ASP.NET Core | Web API and SignalR hubs |
+| ASP.NET Core 8 | Web API and SignalR hubs |
 | C# 12 | Programming language |
-| Entity Framework Core 8 | ORM for PostgreSQL |
+| Entity Framework Core 8.0.10 (Npgsql provider) | ORM for PostgreSQL |
 | PostgreSQL 16 | Primary relational database |
-| Redis 7 | Distributed cache, sessions, locks |
-| RabbitMQ | Event bus for async messaging |
-| MassTransit | Message bus abstraction over RabbitMQ |
-| MediatR | CQRS and pipeline behaviors |
-| FluentValidation | Request validation |
-| AutoMapper | Object to object mapping |
-| Hangfire | Background job orchestration |
-| MinIO | S3 compatible file storage |
-| OpenAI SDK | AI integration - works against real OpenAI or any OpenAI-compatible free provider (OpenRouter, Groq, etc.) |
-| Serilog | Structured logging |
-| OpenTelemetry | Distributed tracing |
-| Polly | Resilience and retry logic |
-| BCrypt | Password hashing |
-| xUnit | Unit testing framework |
-| TestContainers | Integration testing with real Postgres |
+| Redis 7 (StackExchange.Redis 2.13) | Distributed cache, sessions, locks |
+| RabbitMQ 3 | Event bus for async messaging |
+| MassTransit 8.5 | Message bus abstraction over RabbitMQ |
+| MediatR 12.2 | CQRS and pipeline behaviors |
+| FluentValidation 11.9 | Request validation |
+| AutoMapper 12.0.1 | Object to object mapping (has a known vulnerability advisory, upgrade planned) |
+| Hangfire 1.8 (PostgreSQL storage) | Background job orchestration |
+| Minio SDK 7.0 | S3 compatible file storage |
+| OpenAI SDK 2.10 (.NET) | AI integration, works against real OpenAI or any OpenAI-compatible provider (OpenRouter, Groq, etc.) |
+| Serilog 10 | Structured logging |
+| OpenTelemetry 1.15 | Distributed tracing |
+| Polly 8.6 and Microsoft.Extensions.Http.Resilience 8.10 | Resilience and retry logic |
+| BCrypt.Net-Next 4.2 | Password hashing |
+| xUnit 2.5 | Unit testing framework |
+| Testcontainers 4.12 (PostgreSQL) | Integration testing with real Postgres |
+
+### AI service
+
+| Technology | Purpose |
+|------------|---------|
+| Python 3.12 | Runtime |
+| FastAPI 0.143 and Uvicorn 0.54 | HTTP API and server (ASGI) |
+| Pydantic 2.14 | Request and response validation |
+| OpenAI Python SDK 3.28 | Embeddings and chat completions |
+| psycopg 3.3 and pgvector 0.5 | Vector storage and search in PostgreSQL |
+| pytest 8 | Testing |
 
 ### Frontend
 
 | Technology | Purpose |
 |------------|---------|
-| Angular 18 | Frontend framework |
-| TypeScript | Programming language |
+| Angular 21 (web app and admin portal) | Frontend framework, standalone components |
+| TypeScript 5.9 | Programming language |
 | Angular Signals | Reactive state primitives |
-| NgRx | Global state management |
-| Angular Material | UI component library |
-| Tailwind CSS | Utility first styling |
-| RxJS | Reactive programming and async streams |
-| SignalR client | Real-time WebSocket connection |
-| Chart.js | Charts and burndown graphs |
-| Angular CDK | Drag and drop, overlays |
+| Angular Material 21 | UI component library |
+| Tailwind CSS 3.4 | Utility first styling |
+| RxJS 7.8 | Reactive programming and async streams |
+| @microsoft/signalr 10 | Real-time WebSocket connection |
+| Chart.js 4.5 with ng2-charts 10 | Charts and burndown graphs |
+| Angular CDK 21 | Drag and drop, overlays |
+| GSAP 3 and Lenis (marketing page only) | Scroll and entrance motion |
+| Vitest 4 | Unit testing (through `ng test`) |
 
 ### Infrastructure
 
@@ -93,7 +121,7 @@ The goal is to provide an engineering team a reference point that says "this per
 | Docker | Containerization |
 | Docker Compose | Local multi-service orchestration |
 | GitHub Actions | CI/CD pipelines |
-| Nginx | Reverse proxy for production |
+| Nginx | Reverse proxy for production (planned, no config in the repo yet) |
 | MailHog | Local development email server |
 | Seq | Log aggregation and search |
 
@@ -162,8 +190,9 @@ Install these tools before starting.
 | Tool | Version | Purpose |
 |------|---------|---------|
 | .NET SDK | 8.0 or higher | Backend runtime and build |
-| Node.js | 20 or higher | Frontend build |
-| Angular CLI | 18 or higher | Frontend development server |
+| Node.js | 20.19 or higher (22 LTS recommended) | Frontend build |
+| Angular CLI | 21 (installed with the project, run it with `npx ng`) | Frontend development server |
+| Python | 3.12 | AI service |
 | Docker Desktop | Latest | Runs Postgres, Redis, RabbitMQ |
 | Git | Any recent version | Cloning the repository |
 
@@ -496,6 +525,20 @@ ng build --configuration production
 
 The document assistant needs three things running: a pgvector Postgres, the Python service, and the API pointed at the Python service with the **same internal key**.
 
+#### Easiest way (one time setup, then one command)
+
+1. Copy `myenv/.env.example` to `myenv/.env` and fill in your OpenRouter key, `DATABASE_URL=postgresql://postgres:test@localhost:5433/postgres` and `INTERNAL_API_KEY=dev-internal-key`. The Python service reads this file by itself, so no environment variables need typing. The file is gitignored.
+2. Give the API the same key, once: `cd backend/src/FlowForge.API` then `dotnet user-secrets set "AiService:InternalKey" "dev-internal-key"`. (The API already points at `http://127.0.0.1:8001` in `appsettings.Development.json`.)
+3. From then on, start the AI service with one command, from any folder:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File D:\Dektop\FlowForge\start-ai.ps1
+```
+
+The script starts the AI database container (creating it the first time), then runs the service from the `myenv` folder. Stop it with Ctrl+C. The sections below show every step by hand, which is useful if you want to understand or change what the script does.
+
+#### Step by step by hand
+
 ```bash
 # 1) the AI service's own database (pgvector image, separate from the app database)
 docker run -d --name ff-pgvector -e POSTGRES_PASSWORD=test -p 5433:5432 pgvector/pgvector:pg16
@@ -523,6 +566,26 @@ export AiService__InternalKey=dev-internal-key
 cd myenv && ./Scripts/python.exe -m pytest                       # 31 tests, no database needed
 TEST_DATABASE_URL=postgresql://postgres:test@localhost:5433/postgres ./Scripts/python.exe -m pytest   # 38, including pgvector
 ```
+
+**Which folder?** Always run the Python service from inside the **`myenv` folder** (`D:\Dektop\FlowForge\myenv`, the one that contains the `app` and `Scripts` folders). The command `app.main:app` means "the `app` package in the current folder", so it fails with "No module named app" from any other folder.
+
+**Windows PowerShell version** (the `export` lines above are for Git Bash; PowerShell uses `$env:`):
+
+```powershell
+cd D:\Dektop\FlowForge\myenv
+
+$env:OPENAI_API_KEY      = "your OpenRouter key"
+$env:OPENAI_BASE_URL     = "https://openrouter.ai/api/v1"
+$env:EMBEDDING_MODEL     = "openai/text-embedding-3-small"
+$env:CHAT_MODEL          = "nvidia/nemotron-3-ultra-550b-a55b:free"
+$env:CHAT_FALLBACK_MODELS = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
+$env:DATABASE_URL        = "postgresql://postgres:test@localhost:5433/postgres"
+$env:INTERNAL_API_KEY    = "dev-internal-key"
+
+.\Scripts\python.exe -m uvicorn app.main:app --port 8001
+```
+
+You know it started when the terminal shows `Uvicorn running on http://127.0.0.1:8001`. Check it from a browser at http://127.0.0.1:8001/health (it should answer `{"status":"ok"}`) and open http://127.0.0.1:8001/docs for the interactive API page. The pgvector container (`docker start ff-pgvector`) must be running first, or the service cannot reach its database.
 
 Notes:
 - Use `127.0.0.1`, not `localhost`. On Windows `localhost` tries IPv6 first, and the Python server listens on IPv4 only.

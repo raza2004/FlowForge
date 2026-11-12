@@ -31,7 +31,7 @@ public sealed class Sprint : SoftDeletableEntity
         string? goal = null)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 200)
-            return Result.Failure<Sprint>(Error.Validation("Sprint.InvalidName", "Name must be 1-200 chars"));
+            return Result.Failure<Sprint>(Error.Validation("Sprint.InvalidName", "Name must be 1 to 200 chars"));
 
         if (endDate <= startDate)
             return Result.Failure<Sprint>(Error.Validation("Sprint.InvalidDates", "End date must be after start date"));
@@ -98,7 +98,7 @@ public sealed class Sprint : SoftDeletableEntity
             return Result.Failure(Error.Conflict("Sprint.Frozen", "Cannot edit completed/cancelled sprint"));
 
         if (string.IsNullOrWhiteSpace(name) || name.Length > 200)
-            return Result.Failure(Error.Validation("Sprint.InvalidName", "Name must be 1-200 chars"));
+            return Result.Failure(Error.Validation("Sprint.InvalidName", "Name must be 1 to 200 chars"));
 
         if (endDate <= startDate)
             return Result.Failure(Error.Validation("Sprint.InvalidDates", "End date must be after start date"));

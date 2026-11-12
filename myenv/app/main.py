@@ -1,6 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
 
+import openai
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -41,6 +42,15 @@ async def llm_unavailable(_request: Request, ex: LlmUnavailable) -> JSONResponse
     if ex.rate_limited:
         return JSONResponse(status_code=429, content={"detail": "The AI model is busy right now."}, headers={"Retry-After": "30"})
     return JSONResponse(status_code=503, content={"detail": "The AI model is unavailable right now."})
+
+
+@app.exception_handler(openai.AuthenticationError)
+@app.exception_handler(openai.PermissionDeniedError)
+async def provider_rejected_key(_request: Request, ex: Exception) -> JSONResponse:
+    # A wrong, revoked or under-privileged key (HTTP 401 or 403 from the AI provider). Say so in the log, where
+    # the developer will look, and give the caller a safe 503 instead of an anonymous crash.
+    log.error("The AI provider rejected the API key (%s). Check OPENAI_API_KEY and OPENAI_BASE_URL in myenv/.env.", type(ex).__name__)
+    return JSONResponse(status_code=503, content={"detail": "The AI provider rejected the API key."})
 
 
 @app.exception_handler(RuntimeError)

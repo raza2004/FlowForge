@@ -34,9 +34,9 @@ public class AiServiceClient : IAiServiceClient
         _logger = logger;
     }
 
-    public async Task<Result<AssistantAnswerDto>> AskAsync(string question, CancellationToken ct = default)
+    public async Task<Result<AssistantAnswerDto>> AskAsync(string question, IReadOnlyList<ChatTurnDto>? history = null, CancellationToken ct = default)
     {
-        return await SendAsync(AskClient, () => Post("ask", question), async response =>
+        return await SendAsync(AskClient, () => Post("ask", question, history), async response =>
         {
             var wire = await response.Content.ReadFromJsonAsync<AnswerWire>(Json, ct);
             return wire == null
@@ -45,11 +45,11 @@ public class AiServiceClient : IAiServiceClient
         }, ct);
     }
 
-    public async Task<Result<Stream>> StreamAskAsync(string question, CancellationToken ct = default)
+    public async Task<Result<Stream>> StreamAskAsync(string question, IReadOnlyList<ChatTurnDto>? history = null, CancellationToken ct = default)
     {
         // ResponseHeadersRead: the call completes once the first bytes arrive, so the 15 second limit
         // covers "did the AI service start answering?" and the body can then stream for as long as it needs.
-        var result = await SendAsync(AskClient, () => Post("ask/stream", question), async response =>
+        var result = await SendAsync(AskClient, () => Post("ask/stream", question, history), async response =>
             Result.Success<Stream>(await response.Content.ReadAsStreamAsync(ct)), ct, HttpCompletionOption.ResponseHeadersRead, keepResponseOpen: true);
         return result;
     }
@@ -98,8 +98,15 @@ public class AiServiceClient : IAiServiceClient
         return result.IsSuccess ? Result.Success() : Result.Failure(result.Error);
     }
 
-    private static HttpRequestMessage Post(string path, string question) =>
-        new(HttpMethod.Post, path) { Content = JsonContent.Create(new { question }) };
+    private static HttpRequestMessage Post(string path, string question, IReadOnlyList<ChatTurnDto>? history) =>
+        new(HttpMethod.Post, path)
+        {
+            Content = JsonContent.Create(new
+            {
+                question,
+                history = (history ?? Array.Empty<ChatTurnDto>()).Select(h => new { role = h.Role, content = h.Content })
+            })
+        };
 
     /// <summary>
     /// One place that sends a request and maps every outcome. A request is built per attempt, because an

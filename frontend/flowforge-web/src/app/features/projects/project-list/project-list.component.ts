@@ -37,7 +37,7 @@ import { ProjectDto, ProjectSummaryDto } from '../../../shared/models/project.mo
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Key (e.g. PROJ)</mat-label>
           <input matInput formControlName="key" style="text-transform:uppercase">
-          <mat-hint>2-10 characters, starting with a letter (letters and numbers only)</mat-hint>
+          <mat-hint>2 to 10 characters, starting with a letter (letters and numbers only)</mat-hint>
           @if (form.controls.key.touched && form.controls.key.hasError('pattern')) {
             <mat-error>Must start with a letter and contain only letters/numbers</mat-error>
           }

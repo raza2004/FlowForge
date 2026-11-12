@@ -1,0 +1,32 @@
+INFO:     Started server process [21444]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
+2026-11-03 16:26:21,342 INFO [14c387a4-317b-4064-ba32-65522c1f8d3c] app.routes.ask: ask/stream tenant=3be0ff24-7780-4b62-9743-3ae44f7fc6e3 user=d1b2c193-b501-4270-a4d5-e26c3afcd1dd
+2026-11-03 16:26:24,949 INFO [14c387a4-317b-4064-ba32-65522c1f8d3c] httpx2: HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-11-03 16:26:27,427 INFO [14c387a4-317b-4064-ba32-65522c1f8d3c] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:26:28,451 INFO [14c387a4-317b-4064-ba32-65522c1f8d3c] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:26:49,648 INFO [df53272c-fc48-43ee-9471-5ca3a1333f62] httpx2: HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-11-03 16:26:49,761 INFO [df53272c-fc48-43ee-9471-5ca3a1333f62] app.rag.ingest: ingested document
+2026-11-03 16:26:54,324 INFO [04bde441-a05b-48f8-97d3-403ea10a8515] app.routes.ask: ask/stream tenant=3be0ff24-7780-4b62-9743-3ae44f7fc6e3 user=d1b2c193-b501-4270-a4d5-e26c3afcd1dd
+2026-11-03 16:26:54,673 INFO [04bde441-a05b-48f8-97d3-403ea10a8515] httpx2: HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-11-03 16:26:56,099 INFO [04bde441-a05b-48f8-97d3-403ea10a8515] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:26:57,120 INFO [04bde441-a05b-48f8-97d3-403ea10a8515] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:27:21,753 INFO [36e3ae49-e7d2-497e-bc32-d57c4743ba5d] httpx2: HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-11-03 16:27:21,853 INFO [36e3ae49-e7d2-497e-bc32-d57c4743ba5d] app.rag.ingest: ingested document
+2026-11-03 16:27:42,526 INFO [fa2cd462-57c1-42ea-9e09-756034d24c52] app.routes.ask: ask/stream tenant=3be0ff24-7780-4b62-9743-3ae44f7fc6e3 user=d1b2c193-b501-4270-a4d5-e26c3afcd1dd
+2026-11-03 16:27:43,104 INFO [fa2cd462-57c1-42ea-9e09-756034d24c52] httpx2: HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-11-03 16:27:44,258 INFO [fa2cd462-57c1-42ea-9e09-756034d24c52] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:27:45,147 INFO [fa2cd462-57c1-42ea-9e09-756034d24c52] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:27:58,027 INFO [4a5cc456-440f-49b1-bca2-60e8932deff2] app.routes.ask: ask/stream tenant=3be0ff24-7780-4b62-9743-3ae44f7fc6e3 user=d1b2c193-b501-4270-a4d5-e26c3afcd1dd
+2026-11-03 16:27:58,360 INFO [4a5cc456-440f-49b1-bca2-60e8932deff2] httpx2: HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-11-03 16:27:59,586 INFO [4a5cc456-440f-49b1-bca2-60e8932deff2] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:28:00,308 INFO [4a5cc456-440f-49b1-bca2-60e8932deff2] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:28:30,325 INFO [93648ae6-b9bd-4dbe-b019-e689ddbc038a] app.routes.ask: ask/stream tenant=3be0ff24-7780-4b62-9743-3ae44f7fc6e3 user=d1b2c193-b501-4270-a4d5-e26c3afcd1dd
+2026-11-03 16:28:31,331 INFO [93648ae6-b9bd-4dbe-b019-e689ddbc038a] httpx2: HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-11-03 16:28:32,253 INFO [93648ae6-b9bd-4dbe-b019-e689ddbc038a] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:28:32,913 INFO [93648ae6-b9bd-4dbe-b019-e689ddbc038a] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:28:57,568 INFO [045bb356-0377-4a6f-8c8e-7ec34a1846d5] app.routes.ask: ask/stream tenant=3be0ff24-7780-4b62-9743-3ae44f7fc6e3 user=d1b2c193-b501-4270-a4d5-e26c3afcd1dd
+2026-11-03 16:28:58,159 INFO [045bb356-0377-4a6f-8c8e-7ec34a1846d5] httpx2: HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2026-11-03 16:28:59,084 INFO [045bb356-0377-4a6f-8c8e-7ec34a1846d5] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-11-03 16:28:59,697 INFO [045bb356-0377-4a6f-8c8e-7ec34a1846d5] httpx2: HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"

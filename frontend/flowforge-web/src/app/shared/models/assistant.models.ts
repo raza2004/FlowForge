@@ -27,6 +27,12 @@ export type AssistantStreamEvent =
   | { type: 'token'; text: string }
   | { type: 'done'; usage: AssistantUsage | null };
 
+/** An earlier message sent with a question, so a short follow up like "why" is understood. */
+export interface ChatTurn {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;

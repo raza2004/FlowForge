@@ -52,18 +52,23 @@ public class ApplyTaskBreakdownCommandHandler : IRequestHandler<ApplyTaskBreakdo
         if (project == null)
             return Result.Failure<int>(Error.NotFound("Project.NotFound", "Project not found"));
 
+        // Ask for the next task number ONCE and count up locally. The repository answers "how many tasks exist, plus
+        // one", and none of these new subtasks are saved until the loop ends, so asking inside the loop would hand every
+        // subtask the same number and the unique index on (project, task number) would reject the second one.
+        var nextNumber = await _uow.Tasks.GetNextTaskNumberAsync(parent.ProjectId, ct);
+
         var created = 0;
         foreach (var title in request.SubtaskTitles)
         {
-            var taskNumber = await _uow.Tasks.GetNextTaskNumberAsync(parent.ProjectId, ct);
             var taskResult = ProjectTask.Create(
                 _currentUser.TenantId.Value, parent.ProjectId, parent.BoardId, parent.ListId,
-                $"{project.Key.Value}-{taskNumber}", title, parent.Type, parent.Priority,
+                $"{project.Key.Value}-{nextNumber}", title, parent.Type, parent.Priority,
                 _currentUser.UserId.Value, parentTaskId: parent.Id);
 
             if (taskResult.IsFailure) continue;
 
             await _uow.Tasks.AddAsync(taskResult.Value, ct);
+            nextNumber++;   // only a subtask that was actually created uses up a number
             created++;
         }
 

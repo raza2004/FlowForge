@@ -27,7 +27,7 @@ public sealed class Notification : TenantEntity
         Guid? relatedProjectId = null)
     {
         if (string.IsNullOrWhiteSpace(title) || title.Length > 200)
-            return Result.Failure<Notification>(Error.Validation("Notification.InvalidTitle", "Title must be 1-200 chars"));
+            return Result.Failure<Notification>(Error.Validation("Notification.InvalidTitle", "Title must be 1 to 200 chars"));
 
         var notification = new Notification
         {

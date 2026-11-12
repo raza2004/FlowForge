@@ -64,7 +64,7 @@ public sealed class ProjectTask : SoftDeletableEntity
         Guid? parentTaskId = null)
     {
         if (string.IsNullOrWhiteSpace(title) || title.Length > 500)
-            return Result.Failure<ProjectTask>(Error.Validation("Task.InvalidTitle", "Title must be 1-500 chars"));
+            return Result.Failure<ProjectTask>(Error.Validation("Task.InvalidTitle", "Title must be 1 to 500 chars"));
 
         var task = new ProjectTask
         {
@@ -89,7 +89,7 @@ public sealed class ProjectTask : SoftDeletableEntity
     public Result UpdateDetails(string title, string? description, TaskType type, TaskPriority priority)
     {
         if (string.IsNullOrWhiteSpace(title) || title.Length > 500)
-            return Result.Failure(Error.Validation("Task.InvalidTitle", "Title must be 1-500 chars"));
+            return Result.Failure(Error.Validation("Task.InvalidTitle", "Title must be 1 to 500 chars"));
 
         Title = title.Trim();
         Description = description;

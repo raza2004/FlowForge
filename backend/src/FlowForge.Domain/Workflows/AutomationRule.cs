@@ -35,7 +35,7 @@ public sealed class AutomationRule : SoftDeletableEntity
         Guid createdById)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 150)
-            return Result.Failure<AutomationRule>(Error.Validation("Automation.InvalidName", "Name must be 1-150 chars"));
+            return Result.Failure<AutomationRule>(Error.Validation("Automation.InvalidName", "Name must be 1 to 150 chars"));
 
         if (triggerListId == Guid.Empty)
             return Result.Failure<AutomationRule>(Error.Validation("Automation.InvalidTrigger", "A trigger list is required"));

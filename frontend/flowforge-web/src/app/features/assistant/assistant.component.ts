@@ -7,7 +7,7 @@ import { AssistantService } from '../../shared/services/assistant.service';
 import { DashboardService } from '../../shared/services/dashboard.service';
 import { FeaturesService, FEATURE_AI } from '../../shared/services/features.service';
 import { AuthService } from '../../core/services/auth.service';
-import { AssistantDocument, AssistantError, ChatMessage, Citation } from '../../shared/models/assistant.models';
+import { AssistantDocument, AssistantError, ChatMessage, ChatTurn, Citation } from '../../shared/models/assistant.models';
 import { MEMBERSHIP_ROLES } from '../../shared/models/auth.models';
 
 const MAX_BYTES = 25 * 1024 * 1024;
@@ -87,6 +87,9 @@ export class AssistantComponent implements OnInit, AfterViewChecked, OnDestroy {
     const q = text.trim();
     if (!q || this.busy()) return;
 
+    // What was said so far, taken BEFORE this question is added. Failed or unfinished answers are left out.
+    const history = this.historyForServer();
+
     this.question = '';
     this.stickToBottom = true;
     this.busy.set(true);
@@ -96,7 +99,7 @@ export class AssistantComponent implements OnInit, AfterViewChecked, OnDestroy {
       { role: 'assistant', text: '', sources: [], status: 'streaming' }
     ]);
 
-    this.streamSub = this.assistant.stream(q).subscribe({
+    this.streamSub = this.assistant.stream(q, history).subscribe({
       next: event => {
         if (event.type === 'sources') this.patchLast({ sources: event.sources });
         else if (event.type === 'token') this.appendToLast(event.text);
@@ -112,6 +115,14 @@ export class AssistantComponent implements OnInit, AfterViewChecked, OnDestroy {
         setTimeout(() => this.box?.nativeElement.focus());
       }
     });
+  }
+
+  /** The last few finished messages, oldest first. The server limits and trims them again. */
+  private historyForServer(): ChatTurn[] {
+    return this.messages()
+      .filter(m => m.status === 'done' && m.text.trim().length > 0)
+      .slice(-6)
+      .map(m => ({ role: m.role, content: m.text }));
   }
 
   stop() {

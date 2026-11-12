@@ -28,7 +28,7 @@ public sealed class Board : SoftDeletableEntity
         bool isDefault = false)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 100)
-            return Result.Failure<Board>(Error.Validation("Board.InvalidName", "Name must be 1-100 chars"));
+            return Result.Failure<Board>(Error.Validation("Board.InvalidName", "Name must be 1 to 100 chars"));
 
         var board = new Board
         {
@@ -46,7 +46,7 @@ public sealed class Board : SoftDeletableEntity
     public Result UpdateDetails(string name, string? description)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 100)
-            return Result.Failure(Error.Validation("Board.InvalidName", "Name must be 1-100 chars"));
+            return Result.Failure(Error.Validation("Board.InvalidName", "Name must be 1 to 100 chars"));
 
         Name = name.Trim();
         Description = description;

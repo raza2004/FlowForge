@@ -42,7 +42,11 @@ services:
       - flowforge-network
 
   minio:
-    image: minio/minio:latest
+    # minio/minio is no longer published on Docker Hub, so a fresh machine cannot pull it. The Chainguard
+    # build is the same server. It runs unprivileged by default and then cannot write to a new volume,
+    # so it is started as root here (the container has no other process and no published admin access).
+    image: cgr.dev/chainguard/minio:latest
+    user: "0:0"
     container_name: flowforge-minio
     command: server /data --console-address ":9001"
     environment:

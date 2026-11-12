@@ -11,14 +11,35 @@ namespace FlowForge.Application.AI.Assistant;
 // The API is the gatekeeper: each handler decides who may do what BEFORE the AI service is called.
 // The AI service trusts the tenant id it is given, so this is where that trust is earned.
 
-public record AskAssistantQuery(string Question) : IRequest<Result<AssistantAnswerDto>>, IRequiresFeature
+/// <summary>Limits for one earlier message. The role is fixed to user or assistant, so a caller can never smuggle in a
+/// "system" message that overrides the assistant's rules.</summary>
+public class ChatTurnValidator : AbstractValidator<ChatTurnDto>
+{
+    public const int MaxTurns = 10;
+    public const int MaxContentLength = 4000;
+
+    public ChatTurnValidator()
+    {
+        RuleFor(t => t.Role).Must(r => r is "user" or "assistant")
+            .WithMessage("Each earlier message must be from the user or the assistant.");
+        RuleFor(t => t.Content).NotNull().MaximumLength(MaxContentLength);
+    }
+}
+
+public record AskAssistantQuery(string Question, IReadOnlyList<ChatTurnDto>? History = null) : IRequest<Result<AssistantAnswerDto>>, IRequiresFeature
 {
     public string FeatureKey => FeatureKeys.AiAssistant;
 }
 
 public class AskAssistantQueryValidator : AbstractValidator<AskAssistantQuery>
 {
-    public AskAssistantQueryValidator() => RuleFor(x => x.Question).NotEmpty().MaximumLength(2000);
+    public AskAssistantQueryValidator()
+    {
+        RuleFor(x => x.Question).NotEmpty().MaximumLength(2000);
+        RuleFor(x => x.History).Must(h => h == null || h.Count <= ChatTurnValidator.MaxTurns)
+            .WithMessage("The conversation is too long.");
+        RuleForEach(x => x.History).SetValidator(new ChatTurnValidator());
+    }
 }
 
 public class AskAssistantQueryHandler : IRequestHandler<AskAssistantQuery, Result<AssistantAnswerDto>>
@@ -32,18 +53,24 @@ public class AskAssistantQueryHandler : IRequestHandler<AskAssistantQuery, Resul
     {
         if (_user.TenantId == null || _user.UserId == null)
             return Task.FromResult(Result.Failure<AssistantAnswerDto>(Error.Unauthorized("Auth.NoTenant", "No active workspace")));
-        return _ai.AskAsync(request.Question.Trim(), ct);
+        return _ai.AskAsync(request.Question.Trim(), request.History, ct);
     }
 }
 
-public record StreamAssistantQuery(string Question) : IRequest<Result<Stream>>, IRequiresFeature
+public record StreamAssistantQuery(string Question, IReadOnlyList<ChatTurnDto>? History = null) : IRequest<Result<Stream>>, IRequiresFeature
 {
     public string FeatureKey => FeatureKeys.AiAssistant;
 }
 
 public class StreamAssistantQueryValidator : AbstractValidator<StreamAssistantQuery>
 {
-    public StreamAssistantQueryValidator() => RuleFor(x => x.Question).NotEmpty().MaximumLength(2000);
+    public StreamAssistantQueryValidator()
+    {
+        RuleFor(x => x.Question).NotEmpty().MaximumLength(2000);
+        RuleFor(x => x.History).Must(h => h == null || h.Count <= ChatTurnValidator.MaxTurns)
+            .WithMessage("The conversation is too long.");
+        RuleForEach(x => x.History).SetValidator(new ChatTurnValidator());
+    }
 }
 
 public class StreamAssistantQueryHandler : IRequestHandler<StreamAssistantQuery, Result<Stream>>
@@ -57,7 +84,7 @@ public class StreamAssistantQueryHandler : IRequestHandler<StreamAssistantQuery,
     {
         if (_user.TenantId == null || _user.UserId == null)
             return Task.FromResult(Result.Failure<Stream>(Error.Unauthorized("Auth.NoTenant", "No active workspace")));
-        return _ai.StreamAskAsync(request.Question.Trim(), ct);
+        return _ai.StreamAskAsync(request.Question.Trim(), request.History, ct);
     }
 }
 

@@ -27,7 +27,7 @@ public sealed class TaskComment : SoftDeletableEntity
         Guid? parentCommentId = null)
     {
         if (string.IsNullOrWhiteSpace(content) || content.Length > 10000)
-            return Result.Failure<TaskComment>(Error.Validation("Comment.InvalidContent", "Content must be 1-10000 chars"));
+            return Result.Failure<TaskComment>(Error.Validation("Comment.InvalidContent", "Content must be 1 to 10000 chars"));
 
         var comment = new TaskComment
         {
@@ -52,7 +52,7 @@ public sealed class TaskComment : SoftDeletableEntity
             return Result.Failure(Error.Forbidden("Comment.NotAuthor", "Only the author can edit"));
 
         if (string.IsNullOrWhiteSpace(newContent) || newContent.Length > 10000)
-            return Result.Failure(Error.Validation("Comment.InvalidContent", "Content must be 1-10000 chars"));
+            return Result.Failure(Error.Validation("Comment.InvalidContent", "Content must be 1 to 10000 chars"));
 
         Content = newContent;
         IsEdited = true;

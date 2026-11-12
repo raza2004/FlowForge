@@ -29,7 +29,7 @@ public sealed class TaskAttachment : Entity
             return Result.Failure<TaskAttachment>(Error.Validation("Attachment.InvalidFileName", "Filename required, max 500 chars"));
 
         if (fileSizeBytes <= 0 || fileSizeBytes > 100 * 1024 * 1024)
-            return Result.Failure<TaskAttachment>(Error.Validation("Attachment.InvalidSize", "File must be 1 byte - 100 MB"));
+            return Result.Failure<TaskAttachment>(Error.Validation("Attachment.InvalidSize", "File must be 1 byte to 100 MB"));
 
         return Result.Success(new TaskAttachment
         {

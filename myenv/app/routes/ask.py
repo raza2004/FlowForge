@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 def ask(request: AskRequest, ctx: RequestContext = Depends(require_context)) -> AskResponse:
     """Answer from the caller's own tenant documents, with citations."""
     log.info("ask tenant=%s user=%s", ctx.tenant_id, ctx.user_id)
-    return answer_question(ctx.tenant_id, request.question)
+    return answer_question(ctx.tenant_id, request.question, request.history)
 
 
 @router.post("/ask/stream")
@@ -23,7 +23,7 @@ def ask_stream(request: AskRequest, ctx: RequestContext = Depends(require_contex
     """Same as /ask but as server-sent events so the UI can show the answer as it is written."""
     log.info("ask/stream tenant=%s user=%s", ctx.tenant_id, ctx.user_id)
     return StreamingResponse(
-        stream_answer(ctx.tenant_id, request.question),
+        stream_answer(ctx.tenant_id, request.question, request.history),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )

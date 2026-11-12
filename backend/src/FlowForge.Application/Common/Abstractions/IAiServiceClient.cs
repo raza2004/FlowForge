@@ -11,10 +11,10 @@ namespace FlowForge.Application.Common.Abstractions;
 /// </summary>
 public interface IAiServiceClient
 {
-    Task<Result<AssistantAnswerDto>> AskAsync(string question, CancellationToken ct = default);
+    Task<Result<AssistantAnswerDto>> AskAsync(string question, IReadOnlyList<ChatTurnDto>? history = null, CancellationToken ct = default);
 
     /// <summary>Opens the server-sent-event stream. The caller owns (and must dispose) the stream.</summary>
-    Task<Result<Stream>> StreamAskAsync(string question, CancellationToken ct = default);
+    Task<Result<Stream>> StreamAskAsync(string question, IReadOnlyList<ChatTurnDto>? history = null, CancellationToken ct = default);
 
     Task<Result<AssistantDocumentDto>> UploadDocumentAsync(string fileName, string contentType, Stream content, CancellationToken ct = default);
 

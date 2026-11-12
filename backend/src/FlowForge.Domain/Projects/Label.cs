@@ -15,7 +15,7 @@ public sealed class Label : Entity
     public static Result<Label> Create(Guid projectId, string name, string color, string? description = null)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 50)
-            return Result.Failure<Label>(Error.Validation("Label.InvalidName", "Name must be 1-50 chars"));
+            return Result.Failure<Label>(Error.Validation("Label.InvalidName", "Name must be 1 to 50 chars"));
 
         return Result.Success(new Label
         {
@@ -29,7 +29,7 @@ public sealed class Label : Entity
     public Result Update(string name, string color, string? description)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 50)
-            return Result.Failure(Error.Validation("Label.InvalidName", "Name must be 1-50 chars"));
+            return Result.Failure(Error.Validation("Label.InvalidName", "Name must be 1 to 50 chars"));
 
         Name = name.Trim();
         Color = color;

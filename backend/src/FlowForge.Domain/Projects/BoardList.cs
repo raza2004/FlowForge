@@ -20,7 +20,7 @@ public sealed class BoardList : SoftDeletableEntity
     public static Result<BoardList> Create(Guid boardId, Guid tenantId, string name, string color = "#94a3b8", int? wipLimit = null)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 100)
-            return Result.Failure<BoardList>(Error.Validation("BoardList.InvalidName", "Name must be 1-100 chars"));
+            return Result.Failure<BoardList>(Error.Validation("BoardList.InvalidName", "Name must be 1 to 100 chars"));
 
         var list = new BoardList
         {
@@ -43,7 +43,7 @@ public sealed class BoardList : SoftDeletableEntity
     public Result UpdateDetails(string name, string color, int? wipLimit, bool isDoneColumn)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 100)
-            return Result.Failure(Error.Validation("BoardList.InvalidName", "Name must be 1-100 chars"));
+            return Result.Failure(Error.Validation("BoardList.InvalidName", "Name must be 1 to 100 chars"));
 
         Name = name.Trim();
         Color = color;

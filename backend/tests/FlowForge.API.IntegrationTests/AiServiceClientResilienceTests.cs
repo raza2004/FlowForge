@@ -91,6 +91,28 @@ public class AiServiceClientResilienceTests
     }
 
     [Fact]
+    public async Task Sends_the_earlier_conversation_to_the_ai_service_in_its_own_format()
+    {
+        var stub = new StubHandler((_, _, _) => Task.FromResult(Json(HttpStatusCode.OK, AnswerJson)));
+
+        await Build(stub).AskAsync("why", new[] { new FlowForge.Application.AI.Assistant.ChatTurnDto("user", "Is he a fit?"), new FlowForge.Application.AI.Assistant.ChatTurnDto("assistant", "Probably [1].") });
+
+        var body = await stub.Requests.Single().Content!.ReadAsStringAsync();
+        body.Should().Contain("\"question\":\"why\"");
+        body.Should().Contain("\"history\":[{\"role\":\"user\",\"content\":\"Is he a fit?\"},{\"role\":\"assistant\",\"content\":\"Probably [1].\"}]");
+    }
+
+    [Fact]
+    public async Task Sends_an_empty_history_when_there_is_none()
+    {
+        var stub = new StubHandler((_, _, _) => Task.FromResult(Json(HttpStatusCode.OK, AnswerJson)));
+
+        await Build(stub).AskAsync("hello");
+
+        (await stub.Requests.Single().Content!.ReadAsStringAsync()).Should().Contain("\"history\":[]");
+    }
+
+    [Fact]
     public async Task Sends_tenant_user_correlation_and_internal_key_headers()
     {
         var stub = new StubHandler((_, _, _) => Task.FromResult(Json(HttpStatusCode.OK, AnswerJson)));

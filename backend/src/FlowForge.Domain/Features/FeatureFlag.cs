@@ -23,7 +23,7 @@ public sealed class FeatureFlag : Entity
     public static Result<FeatureFlag> Create(string key, string name, string description, bool isEnabled)
     {
         if (string.IsNullOrWhiteSpace(key) || key.Length > 100)
-            return Result.Failure<FeatureFlag>(Error.Validation("FeatureFlag.InvalidKey", "Key must be 1-100 chars"));
+            return Result.Failure<FeatureFlag>(Error.Validation("FeatureFlag.InvalidKey", "Key must be 1 to 100 chars"));
 
         return Result.Success(new FeatureFlag
         {

@@ -13,7 +13,12 @@
       "Bash(npm audit *)",
       "Bash(find \"d:/Dektop\" -maxdepth 3 -iname \"*healthnexus*\" 2>&1)",
       "Read(//d/Dektop/**)",
-      "Read(//d/Dektop/Portfolio/**)"
+      "Read(//d/Dektop/Portfolio/**)",
+      "Bash(node -e ' *)",
+      "Bash(sed -n '/StreamAskAsync/,/^    }/p' AssistantFlowTests.cs)",
+      "Bash(node \"C:/Users/ok/AppData/Local/Temp/claude/d--Dektop-FlowForge/86b1bccb-1a3f-445c-8c43-51734fbd6592/scratchpad/edit-angular-history.js\")",
+      "PowerShell(Set-Location D:\\\\Dektop\\\\FlowForge\\\\backend\\\\src\\\\FlowForge.API; $api = Start-Process dotnet -ArgumentList 'run','--launch-profile','http' -PassThru -WindowStyle Hidden -RedirectStandardOutput D:\\\\Dektop\\\\FlowForge\\\\.api.log -RedirectStandardError D:\\\\Dektop\\\\FlowForge\\\\.api.err; \"api $\\($api.Id\\)\")",
+      "PowerShell(Set-Location D:\\\\Dektop\\\\FlowForge\\\\myenv; $py = Start-Process .\\\\Scripts\\\\python.exe -ArgumentList '-m','uvicorn','app.main:app','--port','8001' -PassThru -WindowStyle Hidden -RedirectStandardOutput D:\\\\Dektop\\\\FlowForge\\\\.py.log -RedirectStandardError D:\\\\Dektop\\\\FlowForge\\\\.py.err; \"py $\\($py.Id\\)\")"
     ]
   }
 }

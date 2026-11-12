@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpDownloadProgressEvent, HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AssistantDocument, AssistantError, AssistantStreamEvent, AssistantUsage, Citation } from '../models/assistant.models';
+import { AssistantDocument, AssistantError, AssistantStreamEvent, AssistantUsage, ChatTurn, Citation } from '../models/assistant.models';
 
 /**
  * Talks to the .NET API only. The browser never calls the AI service directly: the API checks the
@@ -18,7 +18,7 @@ export class AssistantService {
    * written, then a final event with usage. A POST cannot use EventSource, so the raw text is
    * read as it downloads and split into events here.
    */
-  stream(question: string): Observable<AssistantStreamEvent> {
+  stream(question: string, history: ChatTurn[] = []): Observable<AssistantStreamEvent> {
     return new Observable<AssistantStreamEvent>(subscriber => {
       let consumed = 0;
 
@@ -39,7 +39,7 @@ export class AssistantService {
         }
       };
 
-      const sub = this.http.post(`${this.base}/ask/stream`, { question }, {
+      const sub = this.http.post(`${this.base}/ask/stream`, { question, history }, {
         observe: 'events', reportProgress: true, responseType: 'text'
       }).subscribe({
         next: event => {

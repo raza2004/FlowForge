@@ -137,10 +137,10 @@
 
       <!-- User menu at bottom -->
       <div class="p-2 border-t border-line">
-        <button mat-button [matMenuTriggerFor]="userMenu"
-                class="!w-full !justify-start !text-left !px-2 !py-2 !h-auto hover:!bg-sunken">
-          <div class="flex items-center gap-2.5 w-full">
-            <div class="w-8 h-8 rounded-full bg-ember-500 flex items-center justify-center text-white font-medium text-xs">
+        <button type="button" [matMenuTriggerFor]="userMenu"
+                class="block w-full min-w-0 overflow-hidden text-left px-2 py-2 rounded hover:bg-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember-500">
+          <div class="flex items-center gap-2.5 w-full min-w-0">
+            <div class="w-8 h-8 shrink-0 rounded-full bg-ember-500 flex items-center justify-center text-white font-medium text-xs">
               {{ initials }}
             </div>
             <div class="flex-1 min-w-0">

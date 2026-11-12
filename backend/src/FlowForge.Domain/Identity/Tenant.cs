@@ -26,10 +26,10 @@ public sealed class Tenant : AggregateRoot
     public static Result<Tenant> Create(string name, string slug, Guid ownerId)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 100)
-            return Result.Failure<Tenant>(Error.Validation("Tenant.InvalidName", "Name must be 1-100 characters"));
+            return Result.Failure<Tenant>(Error.Validation("Tenant.InvalidName", "Name must be 1 to 100 characters"));
 
         if (string.IsNullOrWhiteSpace(slug) || slug.Length > 50)
-            return Result.Failure<Tenant>(Error.Validation("Tenant.InvalidSlug", "Slug must be 1-50 characters"));
+            return Result.Failure<Tenant>(Error.Validation("Tenant.InvalidSlug", "Slug must be 1 to 50 characters"));
 
         var tenant = new Tenant
         {
@@ -45,7 +45,7 @@ public sealed class Tenant : AggregateRoot
     public Result UpdateProfile(string name, string? description, string? logoUrl)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 100)
-            return Result.Failure(Error.Validation("Tenant.InvalidName", "Name must be 1-100 characters"));
+            return Result.Failure(Error.Validation("Tenant.InvalidName", "Name must be 1 to 100 characters"));
 
         Name = name.Trim();
         Description = description;

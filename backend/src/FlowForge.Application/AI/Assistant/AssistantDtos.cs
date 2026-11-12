@@ -7,4 +7,7 @@ public record AiUsageDto(string Model, int PromptTokens, int CompletionTokens, d
 
 public record AssistantAnswerDto(string Answer, IReadOnlyList<CitationDto> Sources, AiUsageDto Usage, string RetrievalMode);
 
+/// <summary>One earlier message of the conversation (role is "user" or "assistant"), sent so a short follow up like "why" can be understood.</summary>
+public record ChatTurnDto(string Role, string Content);
+
 public record AssistantDocumentDto(string DocumentId, string FileName, int Pages, int Chunks);

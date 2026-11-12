@@ -58,11 +58,16 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<IRealtimeNotifier, SignalRRealtimeNotifier>();
 builder.Services.AddFlowForgeRateLimiting(builder.Configuration);
 
-// CORS for Angular
+// CORS for Angular. Origins come from configuration (Cors:AllowedOrigins, or the environment variable
+// Cors__AllowedOrigins__0, __1 ...) so a deployment can allow its own domain. The local dev servers are the default.
+// When the apps are served from the same origin as the API behind a reverse proxy, no browser CORS is involved at all.
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() is { Length: > 0 } configured
+    ? configured
+    : new[] { "http://localhost:4200", "http://localhost:4201" };
 builder.Services.AddCors(opts =>
 {
     opts.AddPolicy("Frontend", p =>
-        p.WithOrigins("http://localhost:4200", "http://localhost:4201")
+        p.WithOrigins(allowedOrigins)
          .AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 });
 

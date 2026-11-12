@@ -180,7 +180,7 @@ public class OpenAiService : IAiService
         if (string.IsNullOrWhiteSpace(_config["OpenAI:ApiKey"]))
         {
             return Result.Failure(Error.Failure("AI.NotConfigured",
-                "AI API key is not configured. Set OpenAI:ApiKey (and, for a non-OpenAI provider, OpenAI:BaseUrl) in appsettings or user-secrets to enable AI features."));
+                "AI API key is not configured. Set OpenAI:ApiKey (and, for a non OpenAI provider, OpenAI:BaseUrl) in appsettings or user secrets to enable AI features."));
         }
 
         return Result.Success();
@@ -240,6 +240,14 @@ public class OpenAiService : IAiService
                 sawRateLimit |= ex.Status == 429;
                 _logger.LogWarning("AI model {Model} unavailable (HTTP {Status}), trying the next one", model, ex.Status);
             }
+            catch (ClientResultException ex) when (ex.Status is 401 or 403)
+            {
+                // A wrong, revoked or under-privileged key. No other model on the same account will work either,
+                // so stop now. The server log names the cause; the person using the app gets a safe, actionable message.
+                _logger.LogError("The AI provider rejected the API key (HTTP {Status}). Check OpenAI:ApiKey and OpenAI:BaseUrl in the server settings.", ex.Status);
+                return Result.Failure<string>(Error.ServiceUnavailable("AI.NotAuthorized",
+                    "The AI assistant is not set up correctly. Ask an administrator to check the AI provider key."));
+            }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 _logger.LogError(ex, "AI request to model {Model} failed", model);
@@ -249,7 +257,7 @@ public class OpenAiService : IAiService
 
         return sawRateLimit
             ? Result.Failure<string>(Error.TooManyRequests("AI.RateLimited",
-                "The AI provider is busy (its free usage limit was reached). Wait a minute and try again, or add more fallback models."))
+                "The AI provider is busy or out of quota. Wait a minute and try again, or ask an administrator to check the provider plan and credits."))
             : Result.Failure<string>(Error.Failure("AI.RequestFailed", "No AI model could answer right now."));
     }
 
